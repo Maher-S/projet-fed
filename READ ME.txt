@@ -1,0 +1,45 @@
+This is our semester project for the BDBI class of 2023. The project aims to enhance and develop our skills in web scraping. To run this project on Windows, make sure you have the following environment set up:
+
+Pip version 23.1.2
+Python version 3.10.11
+Scrapy version 2.9.0
+Celery version 5.2.7 (dawn-chorus)
+RabbitMQ version 3.11.15
+Erlang OTP version 25.3.2
+Django version 3.2.19
+MySQL version 8.0.33 for Win64
+To run the project, follow these steps in your IDE:
+---------------------------------------------------
+
+For the web_immo app:
+
+Open the Immo-offres directory.
+Access the Immo_offres app directory.
+Run the following command lines:
+	python manage.py makemigrations
+	python manage.py migrate
+	python manage.py runserver
+	Open your web browser and go to http://127.0.0.1:8000/ to access the app.
+---------------------------------------------------
+
+For the scraping app (Immo-Scraper):
+
+
+Configure RabbitMQ: Ensure that RabbitMQ is running and accessible. By default, it should be available at localhost:5672 with the credentials guest/guest.
+Access the Immo_offres app directory.
+Start the Celery worker by running the following command:
+	celery -A scraping_tasks worker --loglevel=info
+Start Celery Beat: In the same terminal or command prompt, start Celery Beat by running the following command:
+	celery -A scraping_tasks beat --loglevel=info
+Execute the Task Execution Code: Run the task_execution.py file to trigger the task execution. You can run it using the following command:
+	python task_execution.py
+
+The scraping process should now run continuously based on the scheduler's time lapse.
+----------------------------------------------------
+Our Team:
+
+Omar Chouki
+Maher Ben Said
+Sayef Ghenia
+Hamza Manai
+Saifeddine Ben Dakhlya
