@@ -1,7 +1,7 @@
 import scrapy
 import mysql.connector
 
-class TayaraSpider(scrapy.Spider):
+class Tayara(scrapy.Spider):
     name = "Tayara"
     allowed_domains = ["www.tayara.tn"]
     start_urls = ["https://www.tayara.tn/ads/c/Immobilier/"]
@@ -12,7 +12,7 @@ class TayaraSpider(scrapy.Spider):
         for article in articles:
             item = {
                 'link': article.css('a::attr(href)').get(),
-                # 'image_url': article.css('img::attr(src)').get(),
+                'image_url': article.css('img::attr(src)').get(),
                 'title': article.css('h2::text').get(),
                 'price': article.css('div.p-0 data::attr(value)').get(),
                 'category': article.css('div.text-2xs span::text').get(),
@@ -31,7 +31,7 @@ class TayaraSpider(scrapy.Spider):
                 for i, timestamp in enumerate(timestamps):
                     item[f'location_timestamp_{i+1}'] = timestamp.strip()
 
-                
+    
             # Connect to MySQL database
             db_connection = mysql.connector.connect(
                 host='localhost',
@@ -46,18 +46,19 @@ class TayaraSpider(scrapy.Spider):
 
             # Insert the scraped data into the "articles" table
             sql = '''
-                INSERT INTO immo_offres_web_article (title, category, nature, price, location, timestamped, link, website, date_scraped)
-                VALUES (%(title)s, %(category)s, %(nature)s, %(price)s, %(location)s, %(timestamped)s, %(link)s, %(website)s, CURRENT_TIMESTAMP)
+                INSERT INTO immo_offres_web_article (title, category, nature, price, location, timestamped, link, website,images, date_scraped)
+                VALUES (%(title)s, %(category)s, %(nature)s, %(price)s, %(location)s, %(timestamped)s, %(link)s, %(website)s,%(images)s, CURRENT_TIMESTAMP)
                 '''
             cursor.execute(sql, {
                 'title': item['title'],
                 'category': item['category'],
                 'price' : item['price'],
-                'nature': '',  # Replace with the appropriate value
-                'location': item.get('location_timestamp_1', '') if 'location_timestamp_1' in item else '',  # Updated line
-                'timestamped': item.get('location_timestamp_2', '') if 'location_timestamp_2' in item else '',  # Updated line
+                'nature': item['category'], 
+                'location': item.get('location_timestamp_1', '') if 'location_timestamp_1' in item else '', 
+                'timestamped': item.get('location_timestamp_2', '') if 'location_timestamp_2' in item else '',
                 'link': item['link'],
-                'website': 'Tayara',  # Replace with the appropriate value
+                'website': 'Tayara',
+                'images': item['image_url'],
             })
 
             # Commit the changes and close the database connection

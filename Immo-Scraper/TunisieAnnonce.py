@@ -3,7 +3,7 @@ import mysql.connector
 
 
 
-class TunisieAnnonceSpider(scrapy.Spider):
+class TunisieAnnonce(scrapy.Spider):
     name = "TunisieAnnonce"
     allowed_domains = ["www.tunisie-annonce.com"]
     start_urls = ["http://www.tunisie-annonce.com/AnnoncesImmobilier.asp"]

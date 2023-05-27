@@ -1,0 +1,123 @@
+{% extends 'base.html' %}
+  {% load static %}
+  
+  {% block content %}
+  <section id="hover-img">
+    <div class="container py-5">
+      <div class="row">
+        {% if articles %}
+        <div class="col-lg-4 sidebar-search">
+          <div class="sidenav">
+            <form action="{% url 'home' %}" method="GET">
+              <div class="form-row">
+                <div class="col-md-12">
+                  <label for="location">Location</label>
+                  <input type="text" name="location" class="form-control" id="location" value="{{ request.GET.location }}">
+                </div>
+                <div class="col-md-12">
+                  <label for="min_price">Min Price</label>
+                  <input type="number" name="min_price" class="form-control" id="min_price" value="{{ request.GET.min_price }}">
+                </div>
+                <div class="col-md-12">
+                  <label for="max_price">Max Price</label>
+                  <input type="number" name="max_price" class="form-control" id="max_price" value="{{ request.GET.max_price }}">
+                </div>
+                <div class="col-md-12">
+                  <label for="category">Category</label>
+                  <input type="text" name="category" class="form-control" id="category" value="{{ request.GET.category }}">
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="col-md-12">
+                  <label for="nature">Nature</label>
+                  <input type="text" name="nature" class="form-control" id="nature" value="{{ request.GET.nature }}">
+                </div>
+                <div class="col-md-12">
+                  <label for="timestamped">Date</label>
+                  <input type="date" name="date" class="form-control" id="date" value="{{ request.GET.date }}">
+                </div>
+                <div class="col-md-6 mb-3">
+                  <button class="btn btn-primary" type="submit">Apply Filters</button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+        <div class="col-lg-8 main-sd">
+          <div class="container py-5">
+            <div class="row">
+                  {% for article in articles %}
+                      <div class="col-xs-12 col-md-6 col-lg-4 mb-4 mb-lg-0">
+                        <div class="card overflow-hidden">
+                          <img src="{{ article.images }}" class="img-fluid" alt="Loading">
+                          <div class="card-body">
+                            <h6 class="card-title mt-3"><a href="#" class="text-decoration-none text-dark">{{ article.title }}</a></h6><br>
+                            <span class="price">Prix: {{ article.price }} TND</span><br>
+                            <span class="date">Date Offre: {{ article.timestamped }}</span><br>
+                            <span class="location">Localisation: {{ article.location }}</span><br>
+                            <span class="category">Category: {{ article.category }}</span><br>
+                            <span class="sub-category">Sous-Category: {{ article.nature }}</span>
+                          </div>
+                          <ul class="list-group list-group-flush">
+                            <li class="list-group-item text-muted"><i class="fa fa-user mr-1" aria-hidden="true"></i>
+                              Source Annonce: {{ article.website }}<br>
+                              <span class="Date">Date de Scraping: {{ article.date_scraped }}</span><br>
+                              <br></br>
+                              <span class="float-right"><button class="btn btn-primary" type="submit"><i class="fa fa-calendar mr-1" aria-hidden="true"></i><a href="{{ article.link }}" class="button">Follow Link</a></button>
+                              </span>
+                            </li>
+                          </ul>
+                        </div>
+                      </div>
+                    {% endfor %}
+          
+               {% else %}
+                  <p>No articles found.</p>
+            {% endif %}
+          </div>
+        </div>
+      </section>
+       
+  <!-- Pagination links -->
+  <div class="pagination">
+    <span class="step-links">
+      {% if articles.has_previous %}
+        <a href="?page=1">&laquo; first</a>
+        <a href="?page={{ articles.previous_page_number }}">previous</a>
+      {% endif %}
+  
+      {% if articles.number > 3 %}
+        <a href="?page=1">1</a>
+        <span class="dot-dot-dot">...</span>
+      {% endif %}
+  
+      {% for i in articles.paginator.page_range %}
+      {% if i >= articles.number|add:"-2" and i <= articles.number|add:"2" %}
+      {% if i == articles.number %}
+            <span class="current-page">{{ i }}</span>
+          {% else %}
+            <a href="?page={{ i }}">{{ i }}</a>
+          {% endif %}
+        {% endif %}
+      {% endfor %}
+  
+      {% if articles.number < articles.paginator.num_pages|add:"-2" %}
+      <span class="dot-dot-dot">...</span>
+        <a href="?page={{ articles.paginator.num_pages }}">{{ articles.paginator.num_pages }}</a>
+      {% endif %}
+  
+      {% if articles.has_next %}
+        <a href="?page={{ articles.next_page_number }}">next</a>
+        <a href="?page={{ articles.paginator.num_pages }}">last &raquo;</a>
+      {% endif %}
+    </span>
+  </div>
+        </div>
+      </div>
+  </div>
+ 
+
+{% endblock %}
+
+
+
